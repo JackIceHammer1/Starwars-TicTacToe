@@ -89,6 +89,12 @@ def draw_desc_diagonal(player):
     color = CIRCLE_COLOR if player == 'O' else CROSS_COLOR
     pygame.draw.line(screen, color, (15, 15), (WIDTH - 15, HEIGHT - 15), 15)
 
+# Reset Board
+def reset_board():
+    for row in range(BOARD_ROWS):
+        for col in range(BOARD_COLS):
+            board[row][col] = None
+
 # Main Loop
 player = 'X'
 game_over = False
@@ -97,18 +103,22 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        if event.type == pygame.MOUSEBUTTONDOWN and not game_over:
-            mouseX = event.pos[0]  # x
-            mouseY = event.pos[1]  # y
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if game_over:
+                reset_board()
+                game_over = False
+            else:
+                mouseX = event.pos[0]  # x
+                mouseY = event.pos[1]  # y
 
-            clicked_row = mouseY // SQUARE_SIZE
-            clicked_col = mouseX // SQUARE_SIZE
+                clicked_row = mouseY // SQUARE_SIZE
+                clicked_col = mouseX // SQUARE_SIZE
 
-            if board[clicked_row][clicked_col] is None:
-                board[clicked_row][clicked_col] = player
-                if check_win(player):
-                    game_over = True
-                player = 'O' if player == 'X' else 'X'
+                if board[clicked_row][clicked_col] is None:
+                    board[clicked_row][clicked_col] = player
+                    if check_win(player):
+                        game_over = True
+                    player = 'O' if player == 'X' else 'X'
 
     draw_lines()
     draw_figures()
