@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 
 # Initialize Pygame
 pygame.init()
@@ -95,6 +96,13 @@ def reset_board():
         for col in range(BOARD_COLS):
             board[row][col] = None
 
+# AI Move
+def ai_move():
+    available_squares = [(r, c) for r in range(BOARD_ROWS) for c in range(BOARD_COLS) if board[r][c] is None]
+    if available_squares:
+        row, col = random.choice(available_squares)
+        board[row][col] = 'O'
+
 # Main Loop
 player = 'X'
 game_over = False
@@ -118,6 +126,10 @@ while True:
                     board[clicked_row][clicked_col] = player
                     if check_win(player):
                         game_over = True
+                    else:
+                        ai_move()
+                        if check_win('O'):
+                            game_over = True
                     player = 'O' if player == 'X' else 'X'
 
     draw_lines()
