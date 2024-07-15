@@ -43,15 +43,37 @@ def draw_figures():
                 pygame.draw.circle(screen, (239, 231, 200), 
                                    (col * SQUARE_SIZE + SQUARE_SIZE // 2, row * SQUARE_SIZE + SQUARE_SIZE // 2), 60, 15)
 
+# Check Win
+def check_win(player):
+    # Vertical Win Check
+    for col in range(BOARD_COLS):
+        if board[0][col] == board[1][col] == board[2][col] == player:
+            return True
+
+    # Horizontal Win Check
+    for row in range(BOARD_ROWS):
+        if board[row][0] == board[row][1] == board[row][2] == player:
+            return True
+
+    # Ascending Diagonal Win Check
+    if board[2][0] == board[1][1] == board[0][2] == player:
+        return True
+
+    # Descending Diagonal Win Check
+    if board[0][0] == board[1][1] == board[2][2] == player:
+        return True
+
+    return False
+
 # Main Loop
 player = 'X'
+game_over = False
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit
             pygame.quit()
             sys.exit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and not game_over:
             mouseX = event.pos[0]  # x
             mouseY = event.pos[1]  # y
 
@@ -60,6 +82,8 @@ while True:
 
             if board[clicked_row][clicked_col] is None:
                 board[clicked_row][clicked_col] = player
+                if check_win(player):
+                    game_over = True
                 player = 'O' if player == 'X' else 'X'
 
     draw_lines()
