@@ -96,12 +96,50 @@ def reset_board():
         for col in range(BOARD_COLS):
             board[row][col] = None
 
-# AI Move
+# AI Move using Minimax Algorithm
 def ai_move():
-    available_squares = [(r, c) for r in range(BOARD_ROWS) for c in range(BOARD_COLS) if board[r][c] is None]
-    if available_squares:
-        row, col = random.choice(available_squares)
-        board[row][col] = 'O'
+    best_score = -float('inf')
+    best_move = None
+    for row in range(BOARD_ROWS):
+        for col in range(BOARD_COLS):
+            if board[row][col] is None:
+                board[row][col] = 'O'
+                score = minimax(board, False)
+                board[row][col] = None
+                if score > best_score:
+                    best_score = score
+                    best_move = (row, col)
+    if best_move:
+        board[best_move[0]][best_move[1]] = 'O'
+
+def minimax(board, is_maximizing):
+    if check_win('O'):
+        return 1
+    if check_win('X'):
+        return -1
+    if all(board[row][col] is not None for row in range(BOARD_ROWS) for col in range(BOARD_COLS)):
+        return 0
+
+    if is_maximizing:
+        best_score = -float('inf')
+        for row in range(BOARD_ROWS):
+            for col in range(BOARD_COLS):
+                if board[row][col] is None:
+                    board[row][col] = 'O'
+                    score = minimax(board, False)
+                    board[row][col] = None
+                    best_score = max(score, best_score)
+        return best_score
+    else:
+        best_score = float('inf')
+        for row in range(BOARD_ROWS):
+            for col in range(BOARD_COLS):
+                if board[row][col] is None:
+                    board[row][col] = 'X'
+                    score = minimax(board, True)
+                    board[row][col] = None
+                    best_score = min(score, best_score)
+        return best_score
 
 # Main Loop
 player = 'X'
