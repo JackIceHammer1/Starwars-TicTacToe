@@ -17,6 +17,8 @@ LINE_COLOR = (23, 145, 135)
 CIRCLE_COLOR = (239, 231, 200)
 CROSS_COLOR = (84, 84, 84)
 WHITE = (255, 255, 255)
+BUTTON_COLOR = (44, 62, 80)
+BUTTON_TEXT_COLOR = (255, 255, 255)
 
 # Load Sounds (dummy sounds for example)
 x_sound = pygame.mixer.Sound('x_sound.wav')
@@ -39,6 +41,13 @@ board = [[None for _ in range(BOARD_COLS)] for _ in range(BOARD_ROWS)]
 # Player Names
 player_X_name = input("Enter the name of player X: ")
 player_O_name = input("Enter the name of player O: ")
+
+# Button Constants
+BUTTON_WIDTH, BUTTON_HEIGHT = 140, 50
+PLAY_AGAIN_BUTTON_POS = (WIDTH // 2 - BUTTON_WIDTH - 20, HEIGHT // 2 + 20)
+QUIT_BUTTON_POS = (WIDTH // 2 + 20, HEIGHT // 2 + 20)
+PLAY_AGAIN_TEXT = "Play Again"
+QUIT_TEXT = "Quit"
 
 # Draw Lines
 def draw_lines():
@@ -214,8 +223,37 @@ def display_winner(winner):
     winner_text = f"{player_X_name if winner == 'X' else player_O_name} Wins!"
     text_surface = font.render(winner_text, True, WHITE)
     screen.blit(text_surface, (WIDTH // 2 - text_surface.get_width() // 2, HEIGHT // 2 - text_surface.get_height() // 2))
+    
+    # Draw Play Again and Quit Buttons
+    pygame.draw.rect(screen, BUTTON_COLOR, (PLAY_AGAIN_BUTTON_POS, (BUTTON_WIDTH, BUTTON_HEIGHT)))
+    pygame.draw.rect(screen, BUTTON_COLOR, (QUIT_BUTTON_POS, (BUTTON_WIDTH, BUTTON_HEIGHT)))
+    
+    play_again_text_surface = font_small.render(PLAY_AGAIN_TEXT, True, BUTTON_TEXT_COLOR)
+    quit_text_surface = font_small.render(QUIT_TEXT, True, BUTTON_TEXT_COLOR)
+    
+    screen.blit(play_again_text_surface, (PLAY_AGAIN_BUTTON_POS[0] + BUTTON_WIDTH // 2 - play_again_text_surface.get_width() // 2,
+                                         PLAY_AGAIN_BUTTON_POS[1] + BUTTON_HEIGHT // 2 - play_again_text_surface.get_height() // 2))
+    
+    screen.blit(quit_text_surface, (QUIT_BUTTON_POS[0] + BUTTON_WIDTH // 2 - quit_text_surface.get_width() // 2,
+                                    QUIT_BUTTON_POS[1] + BUTTON_HEIGHT // 2 - quit_text_surface.get_height() // 2))
+    
     pygame.display.update()
-    pygame.time.wait(2000)
+    
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = event.pos
+                if PLAY_AGAIN_BUTTON_POS[0] <= mouse_x <= PLAY_AGAIN_BUTTON_POS[0] + BUTTON_WIDTH and \
+                   PLAY_AGAIN_BUTTON_POS[1] <= mouse_y <= PLAY_AGAIN_BUTTON_POS[1] + BUTTON_HEIGHT:
+                    reset_board()
+                    return 'play_again'
+                elif QUIT_BUTTON_POS[0] <= mouse_x <= QUIT_BUTTON_POS[0] + BUTTON_WIDTH and \
+                     QUIT_BUTTON_POS[1] <= mouse_y <= QUIT_BUTTON_POS[1] + BUTTON_HEIGHT:
+                    pygame.quit()
+                    sys.exit()
 
 # Main Loop
 player = 'X'
@@ -238,7 +276,10 @@ while True:
                 animate_move(clicked_row, clicked_col, player)
                 if check_win(player):
                     game_over = True
-                    display_winner(player)
+                    result = display_winner(player)
+                    if result == 'play_again':
+                        player = 'X'
+                        game_over = False
                 else:
                     player = 'O' if player == 'X' else 'X'
                     if player == 'O' and not game_over:
