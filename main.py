@@ -16,6 +16,10 @@ LINE_COLOR = (23, 145, 135)
 CIRCLE_COLOR = (239, 231, 200)
 CROSS_COLOR = (84, 84, 84)
 
+# Load Sounds
+x_sound = pygame.mixer.Sound('x_sound.wav')
+o_sound = pygame.mixer.Sound('o_sound.wav')
+
 # Initialize Screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Star Wars Tic-Tac-Toe')
@@ -111,6 +115,7 @@ def ai_move():
                     best_move = (row, col)
     if best_move:
         board[best_move[0]][best_move[1]] = 'O'
+        o_sound.play()
 
 def minimax(board, is_maximizing):
     if check_win('O'):
@@ -162,6 +167,7 @@ while True:
 
                 if board[clicked_row][clicked_col] is None:
                     board[clicked_row][clicked_col] = player
+                    x_sound.play()
                     if check_win(player):
                         game_over = True
                     else:
