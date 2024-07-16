@@ -276,13 +276,15 @@ while True:
                 if check_win(player):
                     game_over = True
                     display_winner(player)
-                player = 'O' if player == 'X' else 'X'
-                if player == 'O' and not game_over:
-                    ai_move()
-                    if check_win('O'):
-                        game_over = True
-                        display_winner('O')
-                    player = 'X'
+                else:
+                    player = 'O' if player == 'X' else 'X'
+                    if player == 'O' and not game_over:
+                        ai_move()
+                        if check_win('O'):
+                            game_over = True
+                            display_winner('O')
+                        else:
+                            player = 'X'
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
