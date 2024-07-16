@@ -158,6 +158,7 @@ while True:
             if game_over:
                 reset_board()
                 game_over = False
+                player = 'X'
             else:
                 mouseX = event.pos[0]  # x
                 mouseY = event.pos[1]  # y
@@ -171,10 +172,11 @@ while True:
                     if check_win(player):
                         game_over = True
                     else:
+                        player = 'O'
                         ai_move()
                         if check_win('O'):
                             game_over = True
-                    player = 'O' if player == 'X' else 'X'
+                    player = 'X'
 
     draw_lines()
     draw_figures()
