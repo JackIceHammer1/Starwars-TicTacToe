@@ -22,6 +22,8 @@ WHITE = (255, 255, 255)
 x_sound = pygame.mixer.Sound('x_sound.wav')
 o_sound = pygame.mixer.Sound('o_sound.wav')
 
+# Load Background Image
+background_image = pygame.image.load('star_wars_background.jpg')
 
 # Load Font
 font = pygame.font.Font('Starjedi.ttf', 40)
@@ -137,6 +139,44 @@ def animate_winning_line(direction, index, player):
         screen.blit(background_image, (0, 0))
         draw_lines()
         draw_figures()
+
+        if direction == 'vertical':
+            posX = index * SQUARE_SIZE + SQUARE_SIZE // 2
+            pygame.draw.line(screen, color, (posX, 15), (posX, int(HEIGHT * progress)), 15)
+        elif direction == 'horizontal':
+            posY = index * SQUARE_SIZE + SQUARE_SIZE // 2
+            pygame.draw.line(screen, color, (15, posY), (int(WIDTH * progress), posY), 15)
+        elif direction == 'asc_diagonal':
+            pygame.draw.line(screen, color, (15, HEIGHT - 15), 
+                             (int(WIDTH * progress), HEIGHT - int(HEIGHT * progress)), 15)
+        elif direction == 'desc_diagonal':
+            pygame.draw.line(screen, color, (15, 15), (int(WIDTH * progress), int(HEIGHT * progress)), 15)
+
+        pygame.display.update()
+
+# Reset Board
+def reset_board():
+    start_time = time.time()
+    duration = 0.5  # Animation duration in seconds
+
+    while True:
+        elapsed_time = time.time() - start_time
+        if elapsed_time >= duration:
+            break
+
+        progress = elapsed_time / duration
+        screen.fill(BG_COLOR)
+        for row in range(BOARD_ROWS):
+            for col in range(BOARD_COLS):
+                if board[row][col]:
+                    center_x = col * SQUARE_SIZE + SQUARE_SIZE // 2
+                    center_y = row * SQUARE_SIZE + SQUARE_SIZE // 2
+                    size = int(60 * (1 - progress))
+                    if board[row][col] == 'X':
+                        draw_scaled_cross(center_x, center_y, size)
+                    elif board[row][col] == 'O':
+                        pygame.draw.circle(screen, CIRCLE_COLOR, (center_x, center_y), size, 15)
+        pygame.display.update()
 
     for row in range(BOARD_ROWS):
         for col in range(BOARD_COLS):
