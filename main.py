@@ -27,6 +27,7 @@ background_image = pygame.image.load('star_wars_background.jpg')
 
 # Load Font
 font = pygame.font.Font('Starjedi.ttf', 40)
+font_small = pygame.font.Font('Starjedi.ttf', 20)
 
 # Initialize Screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -34,6 +35,10 @@ pygame.display.set_caption('Star Wars Tic-Tac-Toe')
 
 # Board
 board = [[None for _ in range(BOARD_COLS)] for _ in range(BOARD_ROWS)]
+
+# Player Names
+player_X_name = input("Enter the name of player X: ")
+player_O_name = input("Enter the name of player O: ")
 
 # Draw Lines
 def draw_lines():
@@ -69,7 +74,8 @@ def animate_move(row, col, player):
         if player == 'X':
             draw_scaled_cross(center_x, center_y, size)
         elif player == 'O':
-            pygame.draw.circle(screen, CIRCLE_COLOR, (center_x, center_y), size, 15)
+            pygame.draw.circle(screen, CIRCLE_COLOR, 
+                               (center_x, center_y), size, 15)
 
         pygame.display.update()
 
@@ -93,10 +99,12 @@ def draw_figures(exclude=None):
             if (row, col) == exclude:
                 continue
             if board[row][col] == 'X':
-                draw_scaled_cross(col * SQUARE_SIZE + SQUARE_SIZE // 2, row * SQUARE_SIZE + SQUARE_SIZE // 2, 60)
+                draw_scaled_cross(col * SQUARE_SIZE + SQUARE_SIZE // 2, 
+                                  row * SQUARE_SIZE + SQUARE_SIZE // 2, 60)
             elif board[row][col] == 'O':
                 pygame.draw.circle(screen, CIRCLE_COLOR, 
-                                   (col * SQUARE_SIZE + SQUARE_SIZE // 2, row * SQUARE_SIZE + SQUARE_SIZE // 2), 60, 15)
+                                   (col * SQUARE_SIZE + SQUARE_SIZE // 2, 
+                                    row * SQUARE_SIZE + SQUARE_SIZE // 2), 60, 15)
 
 # Check Win
 def check_win(player):
@@ -142,15 +150,18 @@ def animate_winning_line(direction, index, player):
 
         if direction == 'vertical':
             posX = index * SQUARE_SIZE + SQUARE_SIZE // 2
-            pygame.draw.line(screen, color, (posX, 15), (posX, int(HEIGHT * progress)), 15)
+            pygame.draw.line(screen, color, (posX, 15), 
+                             (posX, int(HEIGHT * progress)), 15)
         elif direction == 'horizontal':
             posY = index * SQUARE_SIZE + SQUARE_SIZE // 2
-            pygame.draw.line(screen, color, (15, posY), (int(WIDTH * progress), posY), 15)
+            pygame.draw.line(screen, color, (15, posY), 
+                             (int(WIDTH * progress), posY), 15)
         elif direction == 'asc_diagonal':
             pygame.draw.line(screen, color, (15, HEIGHT - 15), 
                              (int(WIDTH * progress), HEIGHT - int(HEIGHT * progress)), 15)
         elif direction == 'desc_diagonal':
-            pygame.draw.line(screen, color, (15, 15), (int(WIDTH * progress), int(HEIGHT * progress)), 15)
+            pygame.draw.line(screen, color, (15, 15), 
+                             (int(WIDTH * progress), int(HEIGHT * progress)), 15)
 
         pygame.display.update()
 
@@ -175,7 +186,8 @@ def reset_board():
                     if board[row][col] == 'X':
                         draw_scaled_cross(center_x, center_y, size)
                     elif board[row][col] == 'O':
-                        pygame.draw.circle(screen, CIRCLE_COLOR, (center_x, center_y), size, 15)
+                        pygame.draw.circle(screen, CIRCLE_COLOR, 
+                                           (center_x, center_y), size, 15)
         pygame.display.update()
 
     for row in range(BOARD_ROWS):
@@ -228,6 +240,20 @@ def minimax(board, is_maximizing):
                     best_score = min(score, best_score)
         return best_score
 
+# Display Player Turn
+def display_player_turn(player):
+    player_turn_text = f"{player_X_name if player == 'X' else player_O_name}'s Turn"
+    text_surface = font_small.render(player_turn_text, True, WHITE)
+    screen.blit(text_surface, (WIDTH // 2 - text_surface.get_width() // 2, HEIGHT - 40))
+
+# Display Winner
+def display_winner(winner):
+    winner_text = f"{player_X_name if winner == 'X' else player_O_name} Wins!"
+    text_surface = font.render(winner_text, True, WHITE)
+    screen.blit(text_surface, (WIDTH // 2 - text_surface.get_width() // 2, HEIGHT // 2 - text_surface.get_height() // 2))
+    pygame.display.update()
+    pygame.time.wait(2000)
+
 # Main Loop
 player = 'X'
 game_over = False
@@ -249,11 +275,13 @@ while True:
                 animate_move(clicked_row, clicked_col, player)
                 if check_win(player):
                     game_over = True
+                    display_winner(player)
                 player = 'O' if player == 'X' else 'X'
                 if player == 'O' and not game_over:
                     ai_move()
                     if check_win('O'):
                         game_over = True
+                        display_winner('O')
                     player = 'X'
 
         if event.type == pygame.KEYDOWN:
@@ -265,4 +293,6 @@ while True:
     screen.blit(background_image, (0, 0))
     draw_lines()
     draw_figures()
+    if not game_over:
+        display_player_turn(player)
     pygame.display.update()
