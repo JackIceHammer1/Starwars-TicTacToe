@@ -30,8 +30,10 @@ This is a classic Tic-Tac-Toe game implemented in Python using the Pygame librar
 
 2. **Install dependencies:**
    ```bash
-   pip install pygame ```
+   pip install pygame
+   ```
 
 3. **Run the game:**
    ```bash
-   python main.py ```
+   python main.py
+   ```
