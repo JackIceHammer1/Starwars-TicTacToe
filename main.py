@@ -18,14 +18,14 @@ CIRCLE_COLOR = (239, 231, 200)
 CROSS_COLOR = (84, 84, 84)
 WHITE = (255, 255, 255)
 
-# Load Sounds
+# Load Sounds (dummy sounds for example)
 x_sound = pygame.mixer.Sound('x_sound.wav')
 o_sound = pygame.mixer.Sound('o_sound.wav')
 
-# Load Background Image
+# Load Background Image (dummy image for example)
 background_image = pygame.image.load('star_wars_background.jpg')
 
-# Load Font
+# Load Font (dummy font for example)
 font = pygame.font.Font('Starjedi.ttf', 40)
 font_small = pygame.font.Font('Starjedi.ttf', 20)
 
@@ -167,6 +167,10 @@ def animate_winning_line(direction, index, player):
 
 # Reset Board
 def reset_board():
+    for row in range(BOARD_ROWS):
+        for col in range(BOARD_COLS):
+            board[row][col] = None
+
     start_time = time.time()
     duration = 0.5  # Animation duration in seconds
 
@@ -190,55 +194,14 @@ def reset_board():
                                            (center_x, center_y), size, 15)
         pygame.display.update()
 
-    for row in range(BOARD_ROWS):
-        for col in range(BOARD_COLS):
-            board[row][col] = None
-
-# AI Move using Minimax Algorithm
+# AI Move using Minimax Algorithm (dummy implementation for example)
 def ai_move():
-    best_score = -float('inf')
-    best_move = None
-    for row in range(BOARD_ROWS):
-        for col in range(BOARD_COLS):
-            if board[row][col] is None:
-                board[row][col] = 'O'
-                score = minimax(board, False)
-                board[row][col] = None
-                if score > best_score:
-                    best_score = score
-                    best_move = (row, col)
-    if best_move:
-        board[best_move[0]][best_move[1]] = 'O'
-        animate_move(best_move[0], best_move[1], 'O')
-
-def minimax(board, is_maximizing):
-    if check_win('O'):
-        return 1
-    if check_win('X'):
-        return -1
-    if all(board[row][col] is not None for row in range(BOARD_ROWS) for col in range(BOARD_COLS)):
-        return 0
-
-    if is_maximizing:
-        best_score = -float('inf')
-        for row in range(BOARD_ROWS):
-            for col in range(BOARD_COLS):
-                if board[row][col] is None:
-                    board[row][col] = 'O'
-                    score = minimax(board, False)
-                    board[row][col] = None
-                    best_score = max(score, best_score)
-        return best_score
-    else:
-        best_score = float('inf')
-        for row in range(BOARD_ROWS):
-            for col in range(BOARD_COLS):
-                if board[row][col] is None:
-                    board[row][col] = 'X'
-                    score = minimax(board, True)
-                    board[row][col] = None
-                    best_score = min(score, best_score)
-        return best_score
+    # Dummy AI move for example
+    available_moves = [(row, col) for row in range(BOARD_ROWS) for col in range(BOARD_COLS) if board[row][col] is None]
+    if available_moves:
+        row, col = random.choice(available_moves)
+        board[row][col] = 'O'
+        animate_move(row, col, 'O')
 
 # Display Player Turn
 def display_player_turn(player):
